@@ -27,12 +27,13 @@ def check_running():
     if data_changed('gitlab.config', hookenv.config()):
         status_set('maintenance', 'Updating Config')
         updateConfig(hookenv.config())
-        status_set('active', 'GitLab is ready!')
 
     if hookenv.config('http_port'):
         hookenv.open_port(hookenv.config('http_port'))
     else:
         hookenv.open_port(80)
+
+    status_set('active', 'GitLab is ready!')
 
 @hook('stop')
 def remove_gitlab():
@@ -49,6 +50,9 @@ def updateConfig(config):
             exturl = "http://"+exturl
 
     if hookenv.config('external_url') and hookenv.config('http_port'):
+        if exturl.endswith("/"):
+            exturl = exturl[:-1]
+
         exturl = exturl + ":" + hookenv.config('http_port')
 
     modConfigNoEquals(filepath, 'external_url', exturl)
