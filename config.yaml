@@ -2,7 +2,11 @@ options:
   external_url:
     type: string
     description: 'The FQDN for your GitLab unit'
-    default: 'localhost'
+    default: 'http://localhost'
+  http_port:
+    type: string
+    description: 'The HTTP port'
+    default: '80'
   ssh_host:
     type: string
     description: 'Override the SSH Hostname'
@@ -22,7 +26,7 @@ options:
   reply_to_email:
     type: string
     description: 'Override the reply to email address'
-    default: ''
+    default:
   smtp_enable:
     type: boolean
     description: 'Enable SMTP sending'
@@ -34,19 +38,19 @@ options:
   smtp_port:
     type: string
     description: 'SMTP Port'
-    default: '456'
+    default:
   smtp_user_name:
     type: string
     description: 'SMTP Username'
-    default: ''
+    default:
   smtp_password:
     type: string
     description: 'SMTP Password'
-    default: ''
+    default:
   smtp_domain:
     type: string
     description: 'SMTP Domain'
-    default: ''
+    default:
   smtp_enable_starttls_auto:
     type: boolean
     description: 'Enable STARTTLS automatically'
@@ -63,23 +67,23 @@ options:
     type: string
     description: 'The email address including the `%{key}` placeholder that will be replaced to reference the item being replied to.
                   The `+%{key}` placeholder is added after the user part, after a `+` character, before the `@`.'
-    default: ''
+    default:
   incoming_email_email:
     type: string
     description: 'Incoming email address'
-    default: ''
+    default:
   incoming_email_password:
     type: string
     description: 'Incoming email password'
-    default: ''
+    default:
   incoming_email_host:
     type: string
     description: 'Incoming Email Host'
-    default: ''
+    default:
   incoming_email_port:
     type: string
     description: 'Incoming Email Port'
-    default: ''
+    default:
   incoming_email_ssl:
     type: boolean
     description: 'Incoming Email SSL'
@@ -91,7 +95,7 @@ options:
   incoming_email_mailbox_name:
     type: string
     description: 'Incoming mailbox name'
-    default: ''
+    default:
   backup_path:
     type: string
     description: 'Override the default backup path'
@@ -100,22 +104,13 @@ options:
     type: string
     description: 'Set the default backup keep time'
     default: '604800'
-
-# gitlab_rails['backup_upload_connection'] = {
-#   'provider' => 'AWS',
-#   'region' => 'eu-west-1',
-#   'aws_access_key_id' => 'AKIAKIAKI',
-#   'aws_secret_access_key' => 'secret123'
-# }
-# gitlab_rails['backup_upload_remote_directory'] = 'my.s3.bucket'
-
-
-# nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt" # Most root CA's are included by default
-# nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.crt"
-# nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
-
-
-# pages_external_url "http://pages.example.com/"
-# pages_nginx['enable'] = false
-# pages_nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.crt"
-# pages_nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
+  backup_upload_connection:
+    type: string
+    description: |
+        'Set the upload provider eg: { 'provider' => 'AWS','region' => 'eu-west-1', 'aws_access_key_id' =>
+        'AKIAKIAKI', 'aws_secret_access_key' => 'secret123' }'
+    default:
+  backup_upload_remote_directory:
+    type: string
+    description: 'Bucket to upload to'
+    default:

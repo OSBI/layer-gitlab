@@ -1,7 +1,7 @@
 import fileinput
 import sys
 from charmhelpers.fetch import apt_install
-from charms.reactive import when, when_not, set_state, remove_state
+from charms.reactive import when, when_not, set_state, remove_state, hook
 from subprocess import check_call, CalledProcessError, call
 from charmhelpers.core import hookenv
 from charmhelpers.core.hookenv import status_set
@@ -24,16 +24,34 @@ def install():
 
 @when('gitlab.installed')
 def check_running():
-    status_set('maintenance', 'Updating Config')
     if data_changed('gitlab.config', hookenv.config()):
+        status_set('maintenance', 'Updating Config')
         updateConfig(hookenv.config())
+        status_set('active', 'GitLab is ready!')
 
-    status_set('active', 'GitLab is ready!')
+    if hookenv.config('http_port'):
+        hookenv.open_port(hookenv.config('http_port'))
+    else:
+        hookenv.open_port(80)
 
+@hook('stop')
+def remove_gitlab():
+    check_call('apt-get', 'remove', 'gitlab-ce')
 
 def updateConfig(config):
     filepath = '/etc/gitlab/gitlab.rb'
-    modConfigNoEquals(filepath, 'external_url', hookenv.config('external_url'))
+
+    exturl = None
+
+    if hookenv.config('external_url'):
+        exturl = hookenv.config('external_url')
+        if not exturl.startswith("http"):
+            exturl = "http://"+exturl
+
+    if hookenv.config('external_url') and hookenv.config('http_port'):
+        exturl = exturl + ":" + hookenv.config('http_port')
+
+    modConfigNoEquals(filepath, 'external_url', exturl)
     modConfig(filepath, 'gitlab_rails[\'gitlab_ssh_host\']', hookenv.config('ssh_host'))
     modConfig(filepath, 'gitlab_rails[\'time_zone\']', hookenv.config('time_zone'))
     modConfig(filepath, 'gitlab_rails[\'gitlab_email_from\']', hookenv.config('email_from'))
@@ -58,8 +76,21 @@ def updateConfig(config):
     modConfig(filepath, 'gitlab_rails[\'incoming_email_mailbox_name\']', hookenv.config('incoming_email_mailbox_name'))
     modConfig(filepath, 'gitlab_rails[\'backup_path\']', hookenv.config('backup_path'))
     modConfig(filepath, 'gitlab_rails[\'backup_keep_time\']', hookenv.config('backup_keep_time'))
+    modConfig(filepath, 'gitlab_rails[\'backup_upload_remote_directory\']',
+              hookenv.config('backup_upload_remote_directory'))
+    modConfig(filepath, 'gitlab_rails[\'backup_upload_connection\']', hookenv.config('backup_upload_connection'))
+
+    check_call(["gitlab-ctl", "reconfigure"])
+
     status_set('active', 'GitLab is ready!')
 
+
+def isfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 def modConfigNoEquals(File, Variable, Setting):
     for line in fileinput.input(File, inplace=1):
@@ -78,9 +109,20 @@ def modConfig(File, Variable, Setting):
     AlreadySet = False
     V = str(Variable)
     S = str(Setting)
-    # use quotes if setting has spaces #
-    if ' ' in S:
-        S = '"%s"' % S
+    if isinstance(Setting, bool):
+        if(Setting):
+            S = "true"
+        else:
+            S = "false"
+    elif(S.isdigit()):
+        S = int(S)
+    elif(isfloat(S)):
+        S = float(S)
+    else:
+        S = '\''+S+'\''
+
+
+
 
     for line in fileinput.input(File, inplace=1):
         # process lines that look like config settings #
@@ -95,12 +137,6 @@ def modConfig(File, Variable, Setting):
                     AlreadySet = True
                 else:
                     line = "%s = %s\n" % (V, S)
-                    if (Setting == '' or Setting is None) and not line.lstrip(' ').startswith('#'):
-                        print("I'm here")
-                        line = '#' + line
-                    elif (Setting != '' or Setting is not None) and line.lstrip(' ').startswith('#'):
-                        print("No I'm here")
-                        line = re.sub("#", "", line)
 
         sys.stdout.write(line)
 
@@ -109,13 +145,13 @@ def modConfig(File, Variable, Setting):
         print("Variable '%s' not found.  Adding it to %s" % (V, File))
         with open(File, "a") as f:
             l = "%s = %s\n" % (V, S)
-            if (Setting == '' or Setting is None) and not line.lstrip(' ').startswith('#'):
-                print("I'm here")
+            if (Setting is '' or Setting is None) and not l.lstrip(' ').startswith('#'):
                 l = '#' + l
                 f.write(l)
-            elif (Setting != '' or Setting is not None) and line.lstrip(' ').startswith('#'):
-                print("No I'm here")
+            elif (Setting is not '' or Setting is not None) and l.lstrip(' ').startswith('#'):
                 l = re.sub("#", "", l)
+                f.write(l)
+            elif (Setting is not '' or Setting is not None):
                 f.write(l)
 
     elif AlreadySet == True:
@@ -125,4 +161,3 @@ def modConfig(File, Variable, Setting):
 
     fileinput.close()
     return
-
