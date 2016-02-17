@@ -6,6 +6,3 @@ description: |
   Gitlab is a Git repository management system similar
   to Github.
 tags: [version_control, application]
-provides:
-  website:
-    interface: http

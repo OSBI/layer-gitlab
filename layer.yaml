@@ -1,1 +1,5 @@
 includes: ['layer:basic']
+options:
+  basic:
+    packages:
+      - apt-transport-https

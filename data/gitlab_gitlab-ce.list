@@ -1,0 +1,2 @@
+deb https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ trusty main
+deb-src https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ trusty main
