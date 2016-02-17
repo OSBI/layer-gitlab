@@ -19,6 +19,12 @@ To deploy Gitlab simply run:
 
 Curently there is no HA mode or scale out.
 
+# Code
+
+Source Code: https://github.com/osbi/layer-gitlab
+
+Built Charm: https://code.launchpad.net/~f-tom-n/charms/trusty/gitlab/trunk
+
 # Contact Information
 
 - <tom@analytical-labs.com>

@@ -1,7 +1,7 @@
 Format: http://dep.debian.net/deps/dep5/
 
 Files: *
-Copyright: Copyright 2015, Canonical Ltd., All Rights Reserved.
+Copyright: Copyright 2016, OSBI Ltd., All Rights Reserved.
 License: Apache License 2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
