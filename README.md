@@ -15,6 +15,8 @@ To deploy Gitlab simply run:
     juju deploy cs:~f-tom-n/trusty/gitlab
     juju expose gitlab
 
+Login to the new server with the username: root and the password: 5iveL!fe and on first login you will be instructed 
+to change the root password.
 # Limitations
 
 Curently there is no HA mode or scale out.
