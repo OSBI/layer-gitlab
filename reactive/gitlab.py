@@ -45,11 +45,6 @@ def check_running():
     status_set('active', 'GitLab is ready!')
 
 
-@hook('stop')
-def remove_gitlab():
-    check_call('apt-get', 'remove', 'gitlab-ce')
-
-
 def updateConfig(config):
     filepath = '/etc/gitlab/gitlab.rb'
 
