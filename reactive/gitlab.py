@@ -8,7 +8,12 @@ from charmhelpers.core.hookenv import status_set
 from charms.reactive.helpers import data_changed
 import re
 import shutil
+from charmhelpers.core.hookenv import log
 
+@when('website.available')
+def configure_website(website):
+    log("starting hook")
+    website.configure(port=8181)
 
 @when_not('gitlab.installed')
 def install():

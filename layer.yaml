@@ -1,4 +1,4 @@
-includes: ['layer:basic']
+includes: ['layer:basic', 'interface:http']
 options:
   basic:
     packages:
