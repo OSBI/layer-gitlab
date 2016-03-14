@@ -1,4 +1,4 @@
-name: gitlab
+name: gitlab-server
 summary: Gitlab CE charm.
 maintainers:
   - Tom Barber <tom@analytical-labs.com>
