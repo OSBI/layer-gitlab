@@ -2,7 +2,7 @@ options:
   gitlab_version:
     type: string
     description: 'The version of GitLab to install'
-    default: '8.4.0-ce.0'
+    default: '9.1.0-ce.0'
   external_url:
     type: string
     description: 'The FQDN for your GitLab unit'
