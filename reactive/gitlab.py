@@ -42,8 +42,10 @@ def install():
     apt_install(["curl", "openssh-server", "ca-certificates", "postfix"])
 
     check_call(['apt-key', 'add', './data/gitlab_gpg.key'])
-
-    shutil.copy2('data/gitlab_gitlab-ce.list', '/etc/apt/sources.list.d/gitlab-ce.list')
+    if(lsb_release()['DISTRIB_CODENAME'] == "trusty"):
+       shutil.copy2('data/gitlab_gitlab-ce.list', '/etc/apt/sources.list.d/gitlab-ce.list')
+    elif(lsb_release()['DISTRIB_CODENAME'] == "xenial"):
+       shutil.copy2('data/gitlab_gitlab-ce.list.xenial', '/etc/apt/sources.list.d/gitlab-ce.list')
 
     check_call(['apt-get', 'update'])
 
@@ -192,3 +194,14 @@ def modConfig(File, Variable, Setting):
 
     fileinput.close()
     return
+
+
+def lsb_release():
+    """Return /etc/lsb-release in a dict"""
+    d = {}
+    with open('/etc/lsb-release', 'r') as lsb:
+        for l in lsb:
+            k, v = l.split('=')
+            d[k.strip()] = v.strip()
+    return d
+

@@ -3,3 +3,5 @@ options:
   basic:
     packages:
       - apt-transport-https
+repo: git@github.com:OSBI/layer-gitlab.git
+

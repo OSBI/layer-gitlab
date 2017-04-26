@@ -9,3 +9,6 @@ tags: [version_control, application]
 provides:
     website:
       interface: http
+series:
+   - xenial
+   - trusty

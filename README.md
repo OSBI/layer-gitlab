@@ -12,11 +12,17 @@ GitLab has integrations for tons of tools such as Slack, Hipchat, LDAP, JIRA, Je
 
 To deploy Gitlab simply run:
 
-    juju deploy cs:~f-tom-n/trusty/gitlab
+    juju deploy cs:~spiculecharms/gitlab
     juju expose gitlab
 
-Login to the new server with the username: root and the password: 5iveL!fe and on first login you will be instructed 
+Login to the new server with the username: root and a password of your choice and on first login you will be instructed 
 to change the root password.
+
+To use it with a HTTP endpoint like HA Proxy you need to run
+
+    juju deploy haproxy
+    juju add-relation haproxy gitlab
+
 # Limitations
 
 Curently there is no HA mode or scale out.
