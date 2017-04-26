@@ -14,25 +14,23 @@ filepath = '/etc/gitlab/gitlab.rb'
 
 
 @when('website.available')
-@when('gitlab.internal_webserver')
 def configure_website(website):
     log("starting hook")
-    modConfig(filepath, 'gitlab_workhorse[\'listen_network\']', 'tcp')
-    modConfig(filepath, 'gitlab_workhorse[\'listen_addr\']', '0.0.0.0')
-    modConfig(filepath, 'nginx[\'enable\']', 'false')
-    modConfig(filepath, 'web_server[\'external_users\']', 'www-data')
-    check_call(['gitlab-ctl', 'reconfigure'])
-    check_call(['gitlab-ctl', 'restart'])
-    website.configure(port=8181)
+    #modConfig(filepath, 'gitlab_workhorse[\'listen_network\']', 'tcp')
+    #modConfig(filepath, 'gitlab_workhorse[\'listen_addr\']', '0.0.0.0')
+    #modConfig(filepath, 'nginx[\'enable\']', 'false')
+    #modConfig(filepath, 'web_server[\'external_users\']', 'www-data')
+    #check_call(['gitlab-ctl', 'reconfigure'])
+    #check_call(['gitlab-ctl', 'restart'])
+    website.configure(port=80)
     set_state('gitlab.external_webserver')
 
 @when_not('website.available')
-@when('gitlab.external_webserver')
-def unconfigure_website(website):
-    modConfig(filepath, 'gitlab_workhorse[\'listen_network\']', None)
-    modConfig(filepath, 'gitlab_workhorse[\'listen_addr\']', None)
-    modConfig(filepath, 'nginx[\'enable\']', 'true')
-    modConfig(filepath, 'web_server[\'external_users\']', None)
+def unconfigure_website():
+    #modConfig(filepath, 'gitlab_workhorse[\'listen_network\']', None)
+    #modConfig(filepath, 'gitlab_workhorse[\'listen_addr\']', None)
+    #modConfig(filepath, 'nginx[\'enable\']', 'true')
+    #modConfig(filepath, 'web_server[\'external_users\']', None)
     set_state('gitlab.internal_webserver')
 
 

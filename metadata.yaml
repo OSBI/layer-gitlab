@@ -1,7 +1,7 @@
 name: gitlab-server
 summary: Gitlab CE charm.
 maintainers:
-  - Tom Barber <tom@analytical-labs.com>
+  - Tom Barber <tom@spicule.co.uk>
 description: |
   This charm will install and configure Gitlab CE.
   Gitlab is a Git repository management system similar
@@ -9,9 +9,6 @@ description: |
 tags:
   - version_control
   - application
-series:
-  - wily
-  - xenial
 provides:
     website:
       interface: http
