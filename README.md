@@ -18,10 +18,12 @@ To deploy Gitlab simply run:
 Login to the new server with the username: root and a password of your choice and on first login you will be instructed 
 to change the root password.
 
-To use it with a HTTP endpoint like HA Proxy you need to run
+To use it with an HTTP endpoint like HA Proxy you need to run
 
     juju deploy haproxy
     juju add-relation haproxy gitlab
+
+This charm also supports the SSL Termination Proxy charm to provide SSL encryption.
 
 # Limitations
 
@@ -31,8 +33,6 @@ Curently there is no HA mode or scale out.
 
 Source Code: https://github.com/osbi/layer-gitlab
 
-Built Charm: https://code.launchpad.net/~f-tom-n/charms/trusty/gitlab/trunk
-
 # Contact Information
 
-- <tom@analytical-labs.com>
+- <tom@spicule.co.uk>
