@@ -128,11 +128,16 @@ def isfloat(value):
 
 
 def modConfigNoEquals(File, Variable, Setting):
-    for line in fileinput.input(File, inplace=1):
-        if line.startswith(Variable):
-            line = Variable + ' \'' + Setting + '\''
-        sys.stdout.write(line)
-    fileinput.close()
+    try:
+        for line in fileinput.input(File, inplace=1):
+            if line.startswith(Variable):
+                line = Variable + ' \'' + Setting + '\''
+            sys.stdout.write(line)
+        fileinput.close()
+    except:
+        log("encoding error")
+        fileinput.close()
+        pass
 
 
 def modConfig(File, Variable, Setting):
@@ -155,22 +160,26 @@ def modConfig(File, Variable, Setting):
     else:
         S = '\'' + S + '\''
 
-    for line in fileinput.input(File, inplace=1):
-        # process lines that look like config settings #
-        if '=' in line:
-            _infile_var = str(line.split('=')[0].rstrip(' '))
-            _infile_set = str(line.split('=')[1].lstrip(' ').rstrip())
-            # only change the first matching occurrence #
-            if VarFound == False and _infile_var.rstrip(' ') == V:
-                VarFound = True
-                # don't change it if it is already set #
-                if _infile_set.lstrip(' ') == S:
-                    AlreadySet = True
-                else:
-                    line = "%s = %s\n" % (V, S)
+    try:
+        for line in fileinput.input(File, inplace=1):
+            # process lines that look like config settings #
+            if '=' in line:
+                _infile_var = str(line.split('=')[0].rstrip(' '))
+                _infile_set = str(line.split('=')[1].lstrip(' ').rstrip())
+                # only change the first matching occurrence #
+                if VarFound == False and _infile_var.rstrip(' ') == V:
+                    VarFound = True
+                    # don't change it if it is already set #
+                    if _infile_set.lstrip(' ') == S:
+                        AlreadySet = True
+                    else:
+                        line = "%s = %s\n" % (V, S)
 
-        sys.stdout.write(line)
-
+            sys.stdout.write(line)
+    except:
+         log("encoding error")
+         fileinput.close()
+         pass
     # Append the variable if it wasn't found #
     if not VarFound:
         print("Variable '%s' not found.  Adding it to %s" % (V, File))

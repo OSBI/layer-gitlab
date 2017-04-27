@@ -1,15 +1,15 @@
 #!/usr/bin/python3
 
-import os
+# import os
 import amulet
 import requests
-#from .lib import helper
-d = amulet.Deployment(series='trusty')
-d.add('gitlab','cs:~f-tom-n/trusty/saikuanalytics-enterprise')
+
+d = amulet.Deployment(series='xenial')
+d.add('gitlab', 'cs:~spiculecharms/gitlab-server')
 d.expose('gitlab')
 try:
     # Create the deployment described above, give us 900 seconds to do it
-    d.setup(timeout=900)
+    d.setup(timeout=1200)
     # Setup will only make sure the services are deployed, related, and in a
     # "started" state. We can employ the sentries to actually make sure there
     # are no more hooks being executed on any of the nodes.
@@ -24,6 +24,5 @@ except:
 gitlab_unit = d.sentry['gitlab'][0]
 
 home_page = requests.get('http://%s:80/' % gitlab_unit.info['public-address'])
-#home_page = requests.get('http://repo.meteorite.bi:8098/')
-home_page.raise_for_status() # Make sure it's not 5XX error
-
+# home_page = requests.get('http://repo.meteorite.bi:8098/')
+home_page.raise_for_status()  # Make sure it's not 5XX error
