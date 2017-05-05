@@ -31,7 +31,6 @@ d.relate('haproxy:reverseproxy', 'gitlab:website')
 home_page = requests.get('http://%s:80/' % haproxy_unit.info['public-address'])
 home_page.raise_for_status()
 
-print("Home page is"+home_page.text)
 assert "GitLab Community Edition" in home_page.text
 
 
