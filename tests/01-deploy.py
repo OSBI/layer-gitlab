@@ -7,22 +7,38 @@ import requests
 d = amulet.Deployment(series='xenial')
 d.add('gitlab', 'cs:~spiculecharms/gitlab-server')
 d.expose('gitlab')
+
+d.add('haproxy', 'cs:haproxy')
+d.expose('haproxy')
+
 try:
-    # Create the deployment described above, give us 900 seconds to do it
     d.setup(timeout=1200)
-    # Setup will only make sure the services are deployed, related, and in a
-    # "started" state. We can employ the sentries to actually make sure there
-    # are no more hooks being executed on any of the nodes.
     d.sentry.wait()
 except amulet.helpers.TimeoutError:
     amulet.raise_status(amulet.SKIP, msg="Environment wasn't stood up in time")
 except:
-    # Something else has gone wrong, raise the error so we can see it and this
-    # will automatically "FAIL" the test.
     raise
-# Shorten the names a little to make working with unit data easier
+
 gitlab_unit = d.sentry['gitlab'][0]
+haproxy_unit = d.sentry['haproxy'][0]
 
 home_page = requests.get('http://%s:80/' % gitlab_unit.info['public-address'])
-# home_page = requests.get('http://repo.meteorite.bi:8098/')
 home_page.raise_for_status()  # Make sure it's not 5XX error
+assert "GitLab Community Edition" in home_page.text
+
+d.relate('haproxy:reverseproxy', 'gitlab:website')
+
+home_page = requests.get('http://%s:80/' % haproxy_unit.info['public-address'])
+home_page.raise_for_status()
+
+print("Home page is"+home_page.text)
+assert "GitLab Community Edition" in home_page.text
+
+
+d.configure('gitlab', {
+    'external_url': 'http://test.spiculecharms.com',
+})
+
+contents = d.sentry['gitlab/0'].file_contents('/etc/gitlab/gitlab.rb')
+
+assert "test.spiculecharms.com" in contents
