@@ -37,6 +37,7 @@ def unconfigure_website():
 @when_not('gitlab.installed')
 def install():
     status_set('maintenance', 'Installing GitLab')
+    check_call(['apt-get', 'update'])
     apt_install(["curl", "openssh-server", "ca-certificates", "postfix"])
 
     check_call(['apt-key', 'add', './data/gitlab_gpg.key'])
